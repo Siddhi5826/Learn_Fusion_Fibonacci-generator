@@ -1,0 +1,51 @@
+import speech_recognition as sr
+import pyttsx3
+
+# Initialize the recognizer and the TTS engine
+recognizer = sr.Recognizer()
+tts_engine = pyttsx3.init()
+
+def speak(text):
+    tts_engine.say(text)
+    tts_engine.runAndWait()
+
+def listen():
+    with sr.Microphone() as source:
+        print("Listening...")
+        audio = recognizer.listen(source)
+        try:
+            text = recognizer.recognize_google(audio)
+            print(f"You said: {text}")
+            return text.lower()
+        except sr.UnknownValueError:
+            print("Sorry, I did not understand that.")
+            return None
+        except sr.RequestError:
+            print("Sorry, my speech service is down.")
+            return None
+
+def process_command(command):
+    if command is None:
+        return
+    elif 'hello' in command:
+        speak("Hello! How can I help you?")
+    elif 'how are you' in command:
+        speak("I'm just a program, so I don't have feelings, but thank you for asking!")
+    elif 'what is your name' in command:
+        speak("I am your voice assistant.")
+    elif 'exit' in command:
+        speak("Goodbye!")
+        return False
+    else:
+        speak("I'm sorry, I don't understand that command.")
+    return True
+
+def main():
+    speak("Hello! How can I assist you today?")
+    while True:
+        command = listen()
+        if not process_command(command):
+            break
+
+if __name__ == "__main__":
+    main()
